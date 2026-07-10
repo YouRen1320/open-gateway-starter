@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["22", "24"]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Lint, test, and build
+        run: npm run check
+
+      - name: Exercise production configuration guard
+        env:
+          VITE_SITE_NAME: CI Gateway
+          VITE_SITE_DESCRIPTION: CI-only description used to exercise the release guard.
+          VITE_SITE_URL: https://gateway.acme.dev
+          VITE_REPOSITORY_URL: https://github.com/acme/gateway
+          VITE_ENABLE_DEMO: "false"
+        run: npm run verify:release
+
+      - name: Audit high-severity dependency issues
+        run: npm audit --audit-level=high

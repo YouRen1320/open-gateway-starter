@@ -1,0 +1,29 @@
+name: Feature request
+description: Propose a scoped improvement to the starter.
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal and scope
+      description: What reusable outcome should this provide?
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Current problem
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Viable options and tradeoffs
+      description: Compare implementation cost, migration cost, risk, rollback, and maintenance when relevant.
+  - type: textarea
+    id: completion
+    attributes:
+      label: Completion criteria and non-goals
+    validations:
+      required: true
